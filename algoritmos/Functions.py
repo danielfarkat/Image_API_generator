@@ -47,16 +47,3 @@ def obter_imagens_satelite(latitude, longitude, data_inicio, data_fim):
         print(f"Erro ao fazer a pesquisa. Código de status: {resposta_pesquisa.status_code}")
 
 
-if __name__ == "__main__":
-    # Exemplo de uso
-    latitude = 37.7749
-    longitude = -122.4194
-    data_inicio = "2022-01-01"
-    data_fim = "2022-12-31"
-
-    imagem, informacoes = obter_imagens_satelite(latitude, longitude, data_inicio, data_fim)
-
-    # Exibir a imagem e informações
-    imagem.show()
-    print("Informações da imagem:")
-    print(informacoes)
