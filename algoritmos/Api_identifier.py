@@ -5,6 +5,13 @@ from io import BytesIO
 from Functions import obter_imagens_satelite
 
 if __name__ == "__main__":
+    from pystac_client import Client
+
+    LandsatSTAC = Client.open("https://landsatlook.usgs.gov/stac-server/", headers=[])
+
+    for collection in LandsatSTAC.get_collections():
+        print(collection)
+    '''
     # Exemplo de uso
     latitude = 37.7749
     longitude = -122.4194
@@ -17,3 +24,4 @@ if __name__ == "__main__":
     imagem.show()
     print("Informações da imagem:")
     print(informacoes)
+    '''
