@@ -10,7 +10,9 @@ from osgeo import gdal
 from rasterio.session import AWSSession
 import os
 from rasterio import warp
-
+import geopandas as gpd
+# a melhor dica é poder trabalhar com o shapefile em dataframe usando o geopandas
+# o geodataframe que é diferente do dataframe porque tem uma coluna chamada geometry e essa coluna é so poligono e o dataframe armazana as coordenadas e eu posso alterar de uma vez todo o sistema de coordenadas 
 # aqui seram colocados três novas fuções a primeira terá o objetivo de fazer a comunicação com o S3
 
 def s3_communication(day,month,year,MGRS_area):
@@ -21,21 +23,26 @@ def s3_communication(day,month,year,MGRS_area):
 os.environ['AWS_NO_SIGN_REQUEST'] = 'YES'
 
 def s3_shapefile_trim(forma, imagem_url):
-    with fiona.open(forma, "r") as shapefile:
-        shapes = [feature["geometry"] for feature in shapefile]
+    shapes = gpd.read_file(forma).to_crs("EPSG:32722")
+    # tem um metodo chamado o
 
         # Obtém o sistema de referência da imagem
-        with rasterio.open(imagem_url) as src:
-            dst_crs = src.crs
+    with rasterio.open(imagem_url) as src:
+        dst_crs = src.crs
 
         # Transforma as geometrias do shapefile para o sistema de referência da imagem
-        shapes_transformed = []
-        for shape in shapes:
-            shape_transformed = warp.transform_geom(src_crs=shapefile.crs, dst_crs=dst_crs, geom=shape, antimeridian_cutting=True)
-            shapes_transformed.append(shape_transformed)
-
+    shapes_transformed = []
+        # não usar o warp  para poder transformar de um raster para outra
+        # não vou transformar o rester para o sistema do poligon vou transformar do poligon para o raster 
+    '''
+    for shape in shapes:
+        # tem que trocar o warp por outra coisa nesse caso vou usar a biblioteca recomendada do geodataframe
+        shape_transformed = warp.transform_geom(src_crs=shapefile.crs, dst_crs=dst_crs, geom=shape, antimeridian_cutting=True)
+        shapes_transformed.append(shape_transformed)
+    '''
     with rasterio.open(imagem_url) as src:
-        out_image, out_transform = rasterio.mask.mask(src, shapes_transformed, invert=False)
+        # aqui eu tenho que perceber que o mask recebe uma geo e não um dataframe então tenho que trabalhar como se fosse uma geosérie.
+        out_image, out_transform = rasterio.mask.mask(src, shapes.geometry)
         out_meta = src.meta
         out_meta.update({
             "driver": "GTiff",
