@@ -22,11 +22,12 @@ def s3_communication(day,month,year,MGRS_area):
 # Desativa a autenticação AWS
 os.environ['AWS_NO_SIGN_REQUEST'] = 'YES'
 
-def s3_shapefile_trim(forma, imagem_url):
+def s3_shapefile_trim(forma, imagem_url, data,banda):
     shapes = gpd.read_file(forma).to_crs("EPSG:32722")
     # aqui estou colocando a coordenada exata da ePSG que transforma o ponto de brasília como o equador ou seja rotacionado, desta forma o shape fica no msm formato da imagem.
 
         # Obtém o sistema de referência da imagem
+    '''
     with rasterio.open(imagem_url) as src:
         dst_crs = src.crs
 
@@ -34,7 +35,7 @@ def s3_shapefile_trim(forma, imagem_url):
     shapes_transformed = []
         # não usar o warp  para poder transformar de um raster para outra
         # não vou transformar o rester para o sistema do poligon vou transformar do poligon para o raster 
-    '''
+    
     for shape in shapes:
         # tem que trocar o warp por outra coisa nesse caso vou usar a biblioteca recomendada do geodataframe
         shape_transformed = warp.transform_geom(src_crs=shapefile.crs, dst_crs=dst_crs, geom=shape, antimeridian_cutting=True)
@@ -51,10 +52,22 @@ def s3_shapefile_trim(forma, imagem_url):
             "transform": out_transform
         })
 
-    with rasterio.open("RGB.byte.masked.tif", "w", **out_meta) as dest:
+    with rasterio.open(f"{data}{banda}.tif", "w", **out_meta) as dest:
         dest.write(out_image)
 
-
+def det_data(numero,padrao,letra,banda):
+    for dia in range(0, 4):
+        dd = f"{dia}{numero}"
+        hh = int(dd)
+        if hh < 31 :
+            print(int(dia + numero))
+            nova_data = f"S2{letra}_22LHH_202307{dia}{numero}"
+            print(nova_data)
+            nova_url = padrao.replace("S2B_22LHH_20230703", nova_data)
+            print(nova_url)
+            s3_shapefile_trim("shapefiles_interesse/test_pivo.shp",nova_url,nova_data,banda)
+        else:
+            print("Finalizado")
 
 
 def obter_imagens_satelite(latitude, longitude, data_inicio, data_fim):

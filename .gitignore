@@ -54,6 +54,12 @@ cover/
 # Translations
 *.mo
 *.pot
+*.tif
+*.shp
+*.dbf
+*.prj
+*.zip
+*.shx
 RGB.byte.masked.tif
 
 # Django stuff:
