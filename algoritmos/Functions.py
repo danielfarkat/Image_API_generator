@@ -57,7 +57,7 @@ def s3_shapefile_trim(forma, imagem_url, data,banda):
 
 def det_data(numero,padrao,letra,banda):
     for dia in range(0, 4):
-        dd = f"{dia}{numero}"
+        dd = f"{dia}"f"{numero}"
         hh = int(dd)
         if hh < 31 :
             print(int(dia + numero))
@@ -65,7 +65,10 @@ def det_data(numero,padrao,letra,banda):
             print(nova_data)
             nova_url = padrao.replace("S2B_22LHH_20230703", nova_data)
             print(nova_url)
-            s3_shapefile_trim("shapefiles_interesse/test_pivo.shp",nova_url,nova_data,banda)
+            try:
+                s3_shapefile_trim("shapefiles_interesse/test_pivo.shp",nova_url,nova_data,banda)
+            except TipoDeErro as e:
+                print(f"Ocorreu um erro: {e}")
         else:
             print("Finalizado")
 
