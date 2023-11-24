@@ -24,7 +24,7 @@ os.environ['AWS_NO_SIGN_REQUEST'] = 'YES'
 
 def s3_shapefile_trim(forma, imagem_url):
     shapes = gpd.read_file(forma).to_crs("EPSG:32722")
-    # tem um metodo chamado o
+    # aqui estou colocando a coordenada exata da ePSG que transforma o ponto de brasília como o equador ou seja rotacionado, desta forma o shape fica no msm formato da imagem.
 
         # Obtém o sistema de referência da imagem
     with rasterio.open(imagem_url) as src:
