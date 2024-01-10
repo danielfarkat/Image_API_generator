@@ -125,3 +125,7 @@ Band 1 Block=1024x1024 Type=UInt16, ColorInterp=Gray
 
 
 ```
+
+# Como baixar o Shapefile
+
+- É possível baixa o shapefile referente ao sistema de referência do sentinel 2 sobre o brasil a partir do site [InstrutorGIS](https://www.instrutorgis.com.br/download-da-grade-do-satelite-sentinel2/)
